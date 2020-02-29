@@ -15,22 +15,23 @@ class GoodsController extends Controller
      */
     public function index()
     {
+        echo 123;
         //商品分类
-        $categoryInfo=Category::get();
-        $info=getCateInfo($categoryInfo);
-        //品牌
-        $brandInfo=Brand::get();
-        $pageSize=config('app.pageSize');
-        $goodsInfo=Goods::leftjoin('category','goods.cate_id','=','category.cate_id')
-                        ->leftjoin('brand','goods.b_id','=','brand.b_id')
-                        ->orderby('goods_id','desc')
-                        ->paginate($pageSize);
-        // dd($goodsInfo);
-        //相册 
-        foreach($goodsInfo as $k=>$v){
-            $goodsInfo[$k]['goods_imgs']=explode('|',$v['goods_imgs']);
-        } 
-        return view('goods.index',['goodsInfo'=>$goodsInfo,'brandInfo'=>$brandInfo,'info'=>$info]);
+        // $categoryInfo=Category::get();
+        // $info=getCateInfo($categoryInfo);
+        // //品牌
+        // $brandInfo=Brand::get();
+        // $pageSize=config('app.pageSize');
+        // $goodsInfo=Goods::leftjoin('category','goods.cate_id','=','category.cate_id')
+        //                 ->leftjoin('brand','goods.b_id','=','brand.b_id')
+        //                 ->orderby('goods_id','desc')
+        //                 ->paginate($pageSize);
+        // // dd($goodsInfo);
+        // //相册 
+        // foreach($goodsInfo as $k=>$v){
+        //     $goodsInfo[$k]['goods_imgs']=explode('|',$v['goods_imgs']);
+        // } 
+        // return view('goods.index',['goodsInfo'=>$goodsInfo,'brandInfo'=>$brandInfo,'info'=>$info]);
     }
 
     /**
