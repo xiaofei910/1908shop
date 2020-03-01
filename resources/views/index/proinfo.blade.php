@@ -39,15 +39,19 @@
      <table class="jia-len">
       <tr>
        <th><strong class="orange">{{$goodsInfo->goods_price}}</strong></th>
-       <td>
-        <input type="text" class="spinnerExample buy_number" />
+       <td> 
+        <input type="button" value="-" style="width:25px" id='lass'/> 
+        <input type="text" value="1" style="width:35px"  id='buy_number'/>
+        <input type="button" value="+" style="width:25px" id='add'/>
+        <!-- <input type="text" class="spinnerExample buy_number" /> -->
        </td>
       </tr>
       <tr>
        <td>
-        <strong>{{$goodsInfo->goods_name}}</strong>
+        <strong>{{$goodsInfo->goods_name}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;库存：<strong id="goods_num">{{$goodsInfo->goods_num}}</strong>
         <p class="hui">{{$goodsInfo->goods_desc}}</p>
        </td>
+
        <td align="right">
         <a href="javascript:;" class="shoucang"><span class="glyphicon glyphicon-star-empty"></span></a>
        </td>
@@ -107,8 +111,62 @@
 	</script>
   </body>
   <script type="text/javascript">
+     //给+绑定一个点击事件
+        $(document).on('click','#add',function(){
+            // alert(1);
+            // 获取文本框的购买数量
+            var buy_number=parseInt($("#buy_number").val());
+            //获取库存的值
+            var goods_num=parseInt($("#goods_num").text());
+            // console.log(typeof buy_number);
+            // console.log(typeof goods_num);
+            if(buy_number>=goods_num){
+                $("#buy_number").val(goods_num);
+            }else{
+                var buy_number=buy_number+1;
+                $("#buy_number").val(buy_number);
+            }
+        });
+         //给-绑定一个点击事件
+        $(document).on('click','#lass',function(){
+            // alert(1);
+            //获取文本框的购买数量
+            var buy_number=parseInt($("#buy_number").val());
+            if(buy_number<=1){
+                $("#buy_number").val(1);
+            }else{
+                var buy_number=buy_number-1;
+                $("#buy_number").val(buy_number);
+            }
+        })
+        //给文本框绑定一个失去焦点事件
+        $(document).on('blur','#buy_number',function(){
+            // console.log(1);
+            //获取文本框的值(购买数量)
+            var buy_number=$("#buy_number").val()
+            //获取库存的值   转化为整数
+            var goods_num=parseInt($("#goods_num").text());
+            var reg=/^\d+$/;
+            //判断购买数量为空 
+            if(buy_number==''){
+                // 文本框的值改为1
+                $("#buy_number").val(1);
+            }else if(!reg.test(buy_number)){
+                // 判断购买数量是否为数字 
+                // 文本框的值改为1
+                $("#buy_number").val(1);
+            }else if(parseInt(buy_number)<1){
+                // 判断购买数量小于1
+                // 文本框的值改为1
+                $("#buy_number").val(1);
+            }else if(parseInt(buy_number)>goods_num){
+                // 判断购买数量>库存
+                // 文本框的值改为最大库存
+                $("#buy_number").val(goods_num);
+            } 
+        })
       $('#addCart').click(function(){
-          var buy_number=$('.buy_number').val();
+          var buy_number=$('#buy_number').val();
           // console.log(append);
           var goods_id="{{$goodsInfo->goods_id}}";
           // console.log(goods_id);

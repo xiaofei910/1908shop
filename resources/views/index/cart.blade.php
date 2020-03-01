@@ -45,14 +45,19 @@
         <td width="100%" colspan="4"><a href="javascript:;"><input type="checkbox" name="1" /> 全选</a></td>
        </tr>
        @foreach($info as $v)
-       <tr>
+       <tr goods_num="{{$v->goods_num}}">
         <td width="4%"><input type="checkbox" name="1" /></td>
         <td class="dingimg" width="15%"><img src="{{env('UPLOAD_URL')}}{{$v->goods_img}}" /></td>
         <td width="50%">
          <h3>{{$v->goods_name}}</h3>
          <time>下单时间：{{date('Y-m-d H:i:s',$v->add_time)}}</time>
+         库存：<span class="goods_num">{{$v->goods_num}}</span>
         </td>
-        <td align="right"><input type="text" value="{{$v->buy_number}}" class="spinnerExample"/></td>
+        <td align="right">
+          <input type="button" value="-" style="width:25px" class='lass'/> 
+          <input type="text" value="{{$v->buy_number}}" style="width:35px"  class='buy_number'/>
+          <input type="button" value="+" style="width:25px" class='add'/>
+        </td>
        </tr>
        <tr>
         <th colspan="4"><strong class="orange">¥{{$v->goods_price}}</strong></th>
@@ -86,4 +91,62 @@
 	$('.spinnerExample').spinner({});
 	</script>
   </body>
+   <script type="text/javascript">
+  //给+绑定一个点击事件
+        $(document).on('click','.add',function(){
+            //文本框的值+1
+              var _this=$(this);
+              var buy_number=parseInt(_this.prev('input').val());
+              // console.log(buy_number);
+              var goods_num=parseInt(_this.parents('tr').attr('goods_num'));
+              var goods_id=_this.parents('tr').attr('goods_id');
+              // console.log(goods_num);
+              if(buy_number>=goods_num){
+                _this.prev('input').val(goods_num);
+              }else{
+                buy_number=buy_number+1;
+                _this.prev('input').val(buy_number);
+              }
+        });
+         //给-绑定一个点击事件
+        $(document).on('click','.lass',function(){
+            var _this=$(this);
+              var buy_number=parseInt(_this.next('input').val());
+              // console.log(buy_number);
+              var goods_id=_this.parents('tr').attr('goods_id');
+              // console.log(goods_id);
+              if(buy_number<=1){
+                _this.next('input').val(1);
+              }else{
+                buy_number=buy_number-1;
+                _this.next('input').val(buy_number);
+              }
+        })
+        //给文本框绑定一个失去焦点事件
+        $(document).on('blur','.buy_number',function(){
+            var _this=$(this);//当前失去焦点的文本框
+              var buy_number=_this.val();//获取文本框的值
+              var goods_num=_this.parents('tr').attr('goods_num');
+              // console.log(buy_number);
+              // console.log(goods_num);
+              var reg=/^\d+$/;
+              //判断购买数量为空 
+              if(buy_number==''){
+                  // 文本框的值改为1
+                  _this.val(1);
+              }else if(!reg.test(buy_number)){
+                  // 判断购买数量是否为数字 
+                  // 文本框的值改为1
+                  _this.val(1);
+              }else if(parseInt(buy_number)<1){
+                  // 判断购买数量小于1
+                  // 文本框的值改为1
+                  _this.val(1);
+              }else if(parseInt(buy_number)>goods_num){
+                  // 判断购买数量>库存
+                  // 文本框的值改为最大库存
+                  _this.val(goods_num);
+              } 
+        })
+  </script>
 </html>

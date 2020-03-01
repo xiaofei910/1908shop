@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Index;
 
+use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Cart;
@@ -21,6 +22,36 @@ class CartController extends Controller
     	//判断用户是否登录
     	if(!$userinfo){
     		// echo "未登录";
+            // 存入cookie
+            $cartInfo=cookie('cartInfo');
+            if($cartInfo){
+               $cartInfo=[]; 
+            }
+            if(array_key_exists($goods_id,$cartInfo)){
+                 // 检测库存
+                if(($buy_number+$cartInfo[$goods_id]['buy_number'])>$goods_num){
+                    //将库存的值赋给购买数量
+                    $buy_number=$goods_num;
+                }else{
+                    // 把购买数量累加，加入时间改为当前时间
+                    $buy_number=$cartInfo[$goods_id]['buy_number']+$buy_number;
+                }
+                $cartInfo[$goods_id]['buy_number']=$buy_number;
+                $cartInfo[$goods_id]['add_time']=time();
+            }else{
+                //检测库存
+                if($buy_number>$goods_num){
+                    $buy_number=$goods_num;
+                }
+                // dd($buy_number);
+                //将商品id、加入购物车时间、购买数量  加入cookie
+                $cartInfo[$goods_id]=['buy_number'=>$buy_number,'goods_id'=>$goods_id,'add_time'=>time()];
+                // dd($cartInfo);
+            }
+            // response('')->cookie('cartInfo',$cartInfo,1000);
+            // cookie('cartInfo',$cartInfo);
+            // echo "ok";
+
     	}else{
     		// echo "已登录";
             $user_id=session('userinfo.user_id'); 
@@ -65,8 +96,9 @@ class CartController extends Controller
     	//判断用户是否登录
     	$userinfo=session('userinfo');
     	if(!$userinfo){
-    		//未登录
-    		//展示cookie中的值
+            // $cartInfo=Cookie::get('cartInfo');
+            $cartInfo=request()->cookie('cartInfo');
+            dd($cartInfo);
     	}else{
     		//登录
     		//展示数据库中的值
